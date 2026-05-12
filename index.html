@@ -3,428 +3,1396 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>EchoGlitch Riddle Decoder™ Advanced</title>
+  <title>EchoGlitch Riddle Decoder™ Advanced Lab</title>
   <style>
     :root {
-      --bg-light: #f0f0f0;
-      --bg-dark: #1e1e28;
-      --text-light: #333;
-      --text-dark: #f5f5f5;
+      --bg-light: #edf2f7;
+      --bg-dark: #15151f;
+      --panel-light: rgba(255,255,255,.68);
+      --panel-dark: rgba(31,31,44,.72);
+      --text-light: #1d2430;
+      --text-dark: #f7fbff;
+      --muted-light: #5b6472;
+      --muted-dark: #aeb8c7;
       --primary: #28a745;
+      --primary-2: #1ec8a5;
       --primary-dark: #218838;
       --highlight: #ffc107;
-
-      /* Neumorphic Shadows */
-      --neumorphic-shadow-light: 8px 8px 16px #d1d1d1, -8px -8px 16px #ffffff;
-      --neumorphic-shadow-dark: 8px 8px 16px #16161c, -8px -8px 16px #262634;
-      --neumorphic-inset-shadow-light: inset 8px 8px 16px #d1d1d1, inset -8px -8px 16px #ffffff;
-      --neumorphic-inset-shadow-dark: inset 8px 8px 16px #16161c, inset -8px -8px 16px #262634;
+      --danger: #ff5f6d;
+      --ok: #7cff9b;
+      --cyan: #6bdcff;
+      --purple: #a98bff;
+      --radius: 18px;
+      --shadow-light: 10px 10px 24px #ccd4dd, -10px -10px 24px #ffffff;
+      --shadow-dark: 10px 10px 24px #0e0e16, -10px -10px 24px #222233;
+      --inset-light: inset 8px 8px 18px #ccd4dd, inset -8px -8px 18px #ffffff;
+      --inset-dark: inset 8px 8px 18px #0e0e16, inset -8px -8px 18px #222233;
+      --font: "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
     }
 
     [data-theme="light"] {
-      background: var(--bg-light);
-      color: var(--text-light);
-      --button-shadow: var(--neumorphic-shadow-light);
-      --input-shadow: var(--neumorphic-inset-shadow-light);
+      --bg: var(--bg-light);
+      --panel: var(--panel-light);
+      --text: var(--text-light);
+      --muted: var(--muted-light);
+      --button-shadow: var(--shadow-light);
+      --input-shadow: var(--inset-light);
+      --border: rgba(20,40,60,.14);
+      --grid: rgba(40,167,69,.13);
     }
 
     [data-theme="dark"] {
-      background: var(--bg-dark);
-      color: var(--text-dark);
-      --button-shadow: var(--neumorphic-shadow-dark);
-      --input-shadow: var(--neumorphic-inset-shadow-dark);
+      --bg: var(--bg-dark);
+      --panel: var(--panel-dark);
+      --text: var(--text-dark);
+      --muted: var(--muted-dark);
+      --button-shadow: var(--shadow-dark);
+      --input-shadow: var(--inset-dark);
+      --border: rgba(255,255,255,.12);
+      --grid: rgba(107,220,255,.11);
     }
 
+    * { box-sizing: border-box; }
+
+    html, body { min-height: 100%; }
+
     body {
-      font-family: 'Segoe UI', sans-serif;
-      text-align: center;
-      padding: 20px;
-      transition: background .3s, color .3s;
+      margin: 0;
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      transition: background .25s ease, color .25s ease;
       overflow-x: hidden;
     }
 
-    /* Glassmorphism Background Effect */
     body::before {
       content: "";
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: radial-gradient(circle at var(--x, 50%) var(--y, 50%), rgba(40, 167, 69, 0.15), transparent 30%);
+      inset: 0;
+      background:
+        radial-gradient(circle at var(--x, 50%) var(--y, 45%), rgba(40, 167, 69, .17), transparent 26%),
+        linear-gradient(90deg, transparent 97%, var(--grid) 100%),
+        linear-gradient(0deg, transparent 97%, var(--grid) 100%);
+      background-size: auto, 44px 44px, 44px 44px;
+      z-index: -2;
+      pointer-events: none;
+      transition: background .2s ease-out;
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
       z-index: -1;
       pointer-events: none;
-      transition: background 0.2s ease-out;
+      background: linear-gradient(135deg, rgba(40,167,69,.12), transparent 35%, rgba(169,139,255,.13));
+      filter: blur(1px);
     }
 
-    h1 {
-      font-size: 2.5rem;
-      margin-bottom: .5em;
+    .app {
+      width: min(1220px, calc(100% - 28px));
+      margin: 0 auto;
+      padding: 24px 0 40px;
+    }
+
+    header.hero {
+      display: grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap: 18px;
+      align-items: stretch;
+      margin-bottom: 18px;
+    }
+
+    .glass-card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      box-shadow: var(--button-shadow);
+      border-radius: var(--radius);
+      backdrop-filter: blur(16px);
+    }
+
+    .hero-title {
+      padding: 24px;
+      text-align: left;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-title h1 {
+      margin: 0 0 8px;
+      font-size: clamp(2rem, 5vw, 4.2rem);
+      line-height: .95;
       color: var(--primary);
-      text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+      letter-spacing: -0.05em;
+      text-shadow: 0 6px 26px rgba(40,167,69,.25);
     }
 
-    textarea, input, select {
-      width: 90%;
-      max-width: 600px;
-      padding: .75em;
-      margin: .5em 0;
-      border: none; /* Remove default border for neumorphism */
-      border-radius: .5em;
-      font-size: 1rem;
-      background: transparent;
-      box-shadow: var(--input-shadow);
-      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    .hero-title p {
+      margin: 0;
+      color: var(--muted);
+      max-width: 760px;
+      font-size: 1.05rem;
+    }
+
+    .hero-title .scanline {
+      position: absolute;
+      inset: auto -10% 0 -10%;
+      height: 4px;
+      background: linear-gradient(90deg, transparent, var(--cyan), var(--primary), transparent);
+      animation: scan 3.4s ease-in-out infinite;
+      opacity: .75;
+    }
+
+    @keyframes scan {
+      0%,100% { transform: translateY(-110px); opacity: .05; }
+      50% { transform: translateY(0); opacity: .75; }
+    }
+
+    .top-stats {
+      padding: 18px;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .stat-chip {
+      padding: 14px;
+      border-radius: 14px;
+      background: rgba(255,255,255,.06);
+      border: 1px solid var(--border);
+      text-align: left;
+    }
+
+    .stat-chip span {
+      display: block;
+      color: var(--muted);
+      font-size: .82rem;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      margin-bottom: 4px;
+    }
+
+    .stat-chip strong {
+      font-size: 1.45rem;
+      color: var(--highlight);
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.55fr) minmax(320px, .85fr);
+      gap: 18px;
+      align-items: start;
+    }
+
+    .panel {
+      padding: 18px;
+    }
+
+    .panel h2, .panel h3 {
+      margin: 0 0 12px;
+      text-align: left;
+      letter-spacing: -.02em;
     }
 
     .controls {
-      margin: 1em 0;
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
       align-items: center;
-      gap: 1em;
+      gap: 10px;
+      margin: 12px 0;
+    }
+
+    .field-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin: 12px 0;
+    }
+
+    label {
+      display: block;
+      text-align: left;
+      font-weight: 700;
+      color: var(--muted);
+      font-size: .88rem;
+    }
+
+    textarea, input, select {
+      width: 100%;
+      padding: .82em .9em;
+      margin-top: 6px;
+      border: 1px solid transparent;
+      border-radius: 14px;
+      color: var(--text);
+      background: transparent;
+      box-shadow: var(--input-shadow);
+      outline: none;
+      font: inherit;
+      transition: border .2s ease, box-shadow .2s ease, transform .2s ease;
+    }
+
+    textarea:focus, input:focus, select:focus {
+      border-color: rgba(40,167,69,.55);
+      transform: translateY(-1px);
+    }
+
+    textarea {
+      min-height: 128px;
+      resize: vertical;
+      line-height: 1.45;
     }
 
     button {
-      padding: .75em 1.5em;
+      padding: .85em 1.1em;
       border: none;
-      border-radius: .5em;
-      background: var(--bg-light);
+      border-radius: 14px;
+      background: var(--bg);
       color: var(--primary);
       cursor: pointer;
-      font-weight: bold;
+      font-weight: 800;
       box-shadow: var(--button-shadow);
-      transition: all 0.2s ease-in-out;
+      transition: transform .18s ease, filter .18s ease, box-shadow .18s ease;
+      min-height: 44px;
     }
 
-    button:hover {
-        transform: translateY(-2px);
+    button:hover { transform: translateY(-2px); filter: saturate(1.1); }
+    button:active { transform: translateY(1px); box-shadow: var(--input-shadow); }
+    button.primary { color: #fff; background: linear-gradient(135deg, var(--primary), var(--primary-2)); }
+    button.warn { color: #221600; background: linear-gradient(135deg, #ffd95e, #ffb703); }
+    button.ghost { color: var(--muted); }
+    button.danger { color: #fff; background: linear-gradient(135deg, #ff5f6d, #ff9671); }
+
+    .slider-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 10px;
     }
 
-    button:active {
-      box-shadow: var(--input-shadow);
-      transform: translateY(1px);
-    }
-    
-    #glitchOutput {
-      margin: 1em auto;
-      padding: 1em;
-      max-width: 800px;
-      background: rgba(255,255,255,0.1);
-      border-radius: .5em;
-      font-size: 1.2rem;
+    input[type="range"] { box-shadow: none; padding: 0; accent-color: var(--primary); }
+
+    .output-box {
+      margin: 14px 0;
+      padding: 18px;
+      min-height: 148px;
+      max-height: 340px;
+      overflow: auto;
+      text-align: left;
+      border-radius: 18px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.07);
       white-space: pre-wrap;
-      overflow-wrap: break-word;
-      min-height: 4em;
-      transition: all 0.3s ease;
+      overflow-wrap: anywhere;
+      line-height: 1.65;
+      font-size: clamp(1rem, 2vw, 1.2rem);
     }
+
+    .result {
+      min-height: 42px;
+      margin: 10px 0;
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: rgba(255,255,255,.06);
+      border: 1px solid var(--border);
+      text-align: left;
+      font-weight: 700;
+    }
+
+    .result.ok { border-color: rgba(124,255,155,.55); color: var(--ok); }
+    .result.bad { border-color: rgba(255,95,109,.55); color: var(--danger); }
 
     .glitch {
       display: inline-block;
-      animation: glitchAnim 0.5s infinite alternate;
+      animation: glitchAnim .55s infinite alternate;
+      text-shadow: 2px 0 rgba(255,0,80,.6), -2px 0 rgba(0,220,255,.5);
     }
-    @keyframes glitchAnim {
-      0% { transform: skew(0.5deg); color: #ff4d4d; }
-      100% { transform: skew(-0.5deg); color: #4d94ff; }
-    }
+
     .echo {
       display: inline-block;
       animation: echoBounce 2s ease-in-out infinite;
+      color: var(--primary);
     }
+
+    .decoded {
+      color: var(--cyan);
+    }
+
+    @keyframes glitchAnim {
+      0% { transform: skew(.8deg) translateX(-1px); color: #ff5f6d; }
+      100% { transform: skew(-.8deg) translateX(1px); color: #6bdcff; }
+    }
+
     @keyframes echoBounce {
       0%,100% { transform: translateX(0); }
       50% { transform: translateX(10px); }
     }
 
-    .stats {
+    .toggles {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    .toggle-card {
       display: flex;
-      justify-content: center;
-      gap: 2em;
-      margin-top: 1em;
-      font-size: 1.25rem;
-    }
-    #streak, #score {
-      color: var(--highlight);
-      font-weight: bold;
-    }
-
-    .hidden { display: none; }
-    
-    .slider {
-      width: 200px;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.05);
+      text-align: left;
     }
 
-    #leaderboard {
-        margin: 2em auto;
-        padding: 1em;
-        max-width: 400px;
-        border: 1px solid var(--primary);
-        border-radius: 8px;
+    .toggle-card small { display: block; color: var(--muted); margin-top: 3px; line-height: 1.35; }
+    .toggle-card input { width: auto; margin: 0; box-shadow: none; transform: scale(1.25); accent-color: var(--primary); }
+
+    .mini-list {
+      display: grid;
+      gap: 8px;
+      text-align: left;
+      max-height: 250px;
+      overflow: auto;
+    }
+
+    .mini-item {
+      padding: 10px;
+      border-radius: 12px;
+      background: rgba(255,255,255,.06);
+      border: 1px solid var(--border);
+      font-size: .94rem;
+    }
+
+    .badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 10px 0;
+    }
+
+    .badge {
+      padding: 6px 9px;
+      border-radius: 999px;
+      background: rgba(40,167,69,.14);
+      border: 1px solid rgba(40,167,69,.33);
+      color: var(--primary);
+      font-weight: 800;
+      font-size: .83rem;
+    }
+
+    .badge.locked { filter: grayscale(1); opacity: .58; }
+
+    .progress-wrap {
+      height: 12px;
+      border-radius: 999px;
+      overflow: hidden;
+      background: rgba(255,255,255,.09);
+      box-shadow: var(--input-shadow);
+      margin: 10px 0;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--danger), var(--highlight), var(--primary));
+      transition: width .25s ease;
     }
 
     .achievement-popup {
       position: fixed;
-      bottom: -100px;
+      bottom: -130px;
       left: 50%;
       transform: translateX(-50%);
-      background-color: var(--primary);
-      color: white;
-      padding: 15px 30px;
-      border-radius: 10px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      background: linear-gradient(135deg, var(--primary), var(--primary-2));
+      color: #fff;
+      padding: 16px 28px;
+      border-radius: 18px;
+      box-shadow: 0 14px 44px rgba(0,0,0,.28);
       z-index: 100;
-      transition: bottom 0.5s ease-in-out;
+      transition: bottom .45s cubic-bezier(.2,.85,.2,1.2);
+      font-weight: 900;
+      max-width: min(520px, calc(100% - 28px));
+    }
+
+    .kbd {
+      font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+      border: 1px solid var(--border);
+      border-bottom-width: 3px;
+      border-radius: 7px;
+      padding: 1px 6px;
+      color: var(--muted);
+      background: rgba(255,255,255,.05);
+    }
+
+    dialog {
+      width: min(720px, calc(100% - 24px));
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      background: var(--bg);
+      color: var(--text);
+      box-shadow: 0 30px 90px rgba(0,0,0,.45);
+      padding: 0;
+    }
+
+    dialog::backdrop { background: rgba(0,0,0,.55); backdrop-filter: blur(4px); }
+    .dialog-body { padding: 20px; }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0,0,0,0);
+      border: 0;
+    }
+
+    [data-motion="reduced"] *, [data-motion="reduced"] *::before, [data-motion="reduced"] *::after {
+      animation: none !important;
+      transition: none !important;
+    }
+
+    [data-contrast="high"] {
+      --primary: #00ff90;
+      --primary-2: #00d9ff;
+      --highlight: #ffe66d;
+      --border: rgba(255,255,255,.34);
+    }
+
+    @media (max-width: 940px) {
+      header.hero, .layout { grid-template-columns: 1fr; }
+      .field-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
-<body data-theme="light">
-  <h1>EchoGlitch Riddle Decoder™</h1>
+<body data-theme="light" data-motion="full" data-contrast="normal">
+  <div class="app">
+    <header class="hero">
+      <section class="hero-title glass-card">
+        <h1>EchoGlitch<br>Riddle Decoder™</h1>
+        <p>Generate riddles, corrupt them with glitch ciphers, decode the signal, build streaks, unlock achievements, and train your pattern-recognition skills in a local-only puzzle lab.</p>
+        <div class="scanline" aria-hidden="true"></div>
+      </section>
 
-  <div class="controls">
-    <button id="themeToggle">Switch to Dark Mode</button>
-    <select id="difficulty">
-      <option value="easy">Easy</option>
-      <option value="medium" selected>Medium</option>
-      <option value="hard">Hard</option>
-    </select>
-    <label>Glitch Intensity: <input type="range" id="intensity" class="slider" min="0" max="100" value="50"></label>
+      <aside class="top-stats glass-card" aria-label="Game statistics">
+        <div class="stat-chip"><span>Score</span><strong id="scoreTop">0</strong></div>
+        <div class="stat-chip"><span>Streak</span><strong id="streakTop">0</strong></div>
+        <div class="stat-chip"><span>Accuracy</span><strong id="accuracyTop">0%</strong></div>
+        <div class="stat-chip"><span>Combo</span><strong id="comboTop">x1</strong></div>
+      </aside>
+    </header>
+
+    <main class="layout">
+      <section class="panel glass-card" aria-label="Riddle game">
+        <h2>Decoder Console</h2>
+
+        <div class="field-grid">
+          <label>Player Name
+            <input id="playerName" maxlength="24" placeholder="Player" autocomplete="nickname" />
+          </label>
+          <label>Difficulty
+            <select id="difficulty">
+              <option value="easy">Easy</option>
+              <option value="medium" selected>Medium</option>
+              <option value="hard">Hard</option>
+              <option value="expert">Expert</option>
+              <option value="adaptive">Adaptive</option>
+            </select>
+          </label>
+          <label>Riddle Pack
+            <select id="category">
+              <option value="all" selected>All Signals</option>
+              <option value="classic">Classic</option>
+              <option value="logic">Logic</option>
+              <option value="nature">Nature</option>
+              <option value="tech">Tech</option>
+              <option value="custom">Custom Only</option>
+            </select>
+          </label>
+          <label>Glitch Cipher
+            <select id="cipherMode">
+              <option value="echo" selected>Echo Zalgo</option>
+              <option value="mirror">Mirror Fog</option>
+              <option value="caesar">Caesar Static</option>
+              <option value="glyph">Glyph Storm</option>
+              <option value="stealth">Zero-Width Whisper</option>
+              <option value="hybrid">Hybrid Chaos</option>
+            </select>
+          </label>
+        </div>
+
+        <label class="slider-row">Glitch Intensity
+          <output id="intensityValue">50%</output>
+          <input type="range" id="intensity" min="0" max="100" value="50" />
+        </label>
+
+        <label>Riddle Input
+          <textarea id="riddleInput" placeholder="Enter your own riddle or generate one..."></textarea>
+        </label>
+
+        <div class="controls">
+          <button class="primary" id="genBtn">Generate Riddle</button>
+          <button id="dailyBtn">Daily Signal</button>
+          <button class="warn" id="encryptBtn">Encrypt Glitch</button>
+          <button class="ghost" id="copyBtn">Copy Output</button>
+        </div>
+
+        <div id="glitchOutput" class="output-box" aria-live="polite"></div>
+
+        <label>Answer
+          <input id="answerInput" placeholder="Your answer here..." autocomplete="off" />
+        </label>
+
+        <div class="progress-wrap" title="Answer confidence">
+          <div id="confidenceBar" class="progress-bar"></div>
+        </div>
+        <div id="confidenceText" class="result">Confidence meter ready.</div>
+
+        <div class="controls">
+          <button class="primary" id="solveBtn">Solve & Decrypt</button>
+          <button id="hintBtn">Smart Hint</button>
+          <button id="lensBtn">Decode Lens</button>
+          <button id="skipBtn">Skip</button>
+        </div>
+
+        <div id="result" class="result">Generate a riddle to begin.</div>
+
+        <div class="controls">
+          <button id="importBtn">Import Riddles</button>
+          <button id="exportBtn">Export Progress</button>
+          <button id="helpBtn">Help</button>
+          <button class="danger" id="resetBtn">Reset Local Data</button>
+        </div>
+
+        <p style="color:var(--muted); text-align:left; margin-bottom:0;">Shortcuts: <span class="kbd">G</span> generate, <span class="kbd">E</span> encrypt, <span class="kbd">Enter</span> solve, <span class="kbd">H</span> hint, <span class="kbd">L</span> lens.</p>
+      </section>
+
+      <aside class="panel glass-card" aria-label="Decoder lab side panel">
+        <h2>Decoder Lab</h2>
+
+        <div class="toggles">
+          <label class="toggle-card">
+            <span>Fuzzy Answer Check <small>Accepts close spellings using local similarity scoring.</small></span>
+            <input type="checkbox" id="fuzzyToggle" checked />
+          </label>
+          <label class="toggle-card">
+            <span>Confidence Meter <small>Shows how close your guess is before solving.</small></span>
+            <input type="checkbox" id="confidenceToggle" checked />
+          </label>
+          <label class="toggle-card">
+            <span>Smart Hints <small>Progressive hints: category, length, letters, then clue words.</small></span>
+            <input type="checkbox" id="smartHintToggle" checked />
+          </label>
+          <label class="toggle-card">
+            <span>Reduced Motion <small>Disables glitch animations for comfort and accessibility.</small></span>
+            <input type="checkbox" id="motionToggle" />
+          </label>
+          <label class="toggle-card">
+            <span>High Contrast <small>Boosts borders, accent colors, and readability.</small></span>
+            <input type="checkbox" id="contrastToggle" />
+          </label>
+          <label class="toggle-card">
+            <span>Sound Blips <small>Uses tiny generated WebAudio tones. No files needed.</small></span>
+            <input type="checkbox" id="soundToggle" />
+          </label>
+        </div>
+
+        <div class="controls">
+          <button id="themeToggle">Switch to Dark Mode</button>
+        </div>
+
+        <h3>Achievements</h3>
+        <div id="achievements" class="badge-row"></div>
+
+        <h3>Leaderboard</h3>
+        <div id="leaderboard" class="mini-list"></div>
+
+        <h3>History</h3>
+        <div id="history" class="mini-list"></div>
+      </aside>
+    </main>
   </div>
 
-  <textarea id="riddleInput" placeholder="Enter or generate a riddle..."></textarea>
-  
-  <div class="controls">
-    <button id="genBtn">Generate Riddle</button>
-    <button id="encryptBtn">Encrypt Glitch</button>
-  </div>
-  
-  <div id="glitchOutput"></div>
-  
-  <input id="answerInput" placeholder="Your answer here..." autocomplete="off" />
-  
-  <div class="controls">
-    <button id="solveBtn">Solve & Decrypt</button>
-    <button id="hintBtn">Hint</button>
-  </div>
-  
-  <div id="result"></div>
-  
-  <div class="stats">
-      <div id="streak">Streak: 0</div>
-      <div id="score">Score: 0</div>
-  </div>
+  <dialog id="importDialog">
+    <div class="dialog-body">
+      <h2>Import Custom Riddles</h2>
+      <p style="color:var(--muted);">Paste JSON as an array. Each item needs <code>riddle</code> and <code>answer</code>. Optional: <code>difficulty</code>, <code>category</code>, <code>aliases</code>.</p>
+      <textarea id="importText" placeholder='[{"riddle":"What runs but never walks?","answer":"water","difficulty":"easy","category":"nature"}]'></textarea>
+      <div class="controls">
+        <button class="primary" id="saveImportBtn">Save Custom Riddles</button>
+        <button id="closeImportBtn">Close</button>
+      </div>
+    </div>
+  </dialog>
 
-  <div id="leaderboard"></div>
-  
+  <dialog id="helpDialog">
+    <div class="dialog-body">
+      <h2>How to Play</h2>
+      <p>Generate or write a riddle, encrypt it, then solve the answer. Harder difficulties, faster answers, fewer hints, and stronger glitch intensity give better scores.</p>
+      <ul style="text-align:left; line-height:1.7; color:var(--muted);">
+        <li><strong>Decode Lens</strong> strips visual glitch markers and reveals a cleaned signal preview.</li>
+        <li><strong>Adaptive</strong> difficulty follows your streak: it gets harder as you improve.</li>
+        <li><strong>Fuzzy Answer Check</strong> accepts small typos, aliases, and article-free answers.</li>
+        <li><strong>Everything is local</strong>: progress, custom riddles, and leaderboard stay in your browser storage.</li>
+      </ul>
+      <div class="controls"><button class="primary" id="closeHelpBtn">Close</button></div>
+    </div>
+  </dialog>
+
   <script>
-    const riddles = [
-      { riddle: "I speak without a mouth and hear without ears. I have nobody, but I come alive with the wind.", answer: "echo" },
-      { riddle: "I have cities, but no houses. I have mountains, but no trees. I have water, but no fish.", answer: "map" },
-      { riddle: "What has an eye, but cannot see?", answer: "needle" },
-      { riddle: "What has to be broken before you can use it?", answer: "egg" },
-      { riddle: "I’m tall when I’m young, and I’m short when I’m old.", answer: "candle" },
-      { riddle: "What can you catch, but not throw?", answer: "cold" },
-      { riddle: "What has keys but can't open locks?", answer: "piano" },
-      { riddle: "What gets wetter as it dries?", answer: "towel" },
-      { riddle: "What has a head, a tail, but no body?", answer: "coin" },
-      { riddle: "I have branches, but no fruit, trunk, or leaves.", answer: "bank" }
+    "use strict";
+
+    const STORAGE_KEY = "echoglitch-advanced-v2";
+    const OLD_ACHIEVEMENT_KEY = "achievements";
+
+    const baseRiddles = [
+      { riddle: "I speak without a mouth and hear without ears. I have nobody, but I come alive with the wind.", answer: "echo", difficulty: "medium", category: "classic", aliases: ["an echo"] },
+      { riddle: "I have cities, but no houses. I have mountains, but no trees. I have water, but no fish.", answer: "map", difficulty: "medium", category: "classic", aliases: ["a map"] },
+      { riddle: "What has an eye, but cannot see?", answer: "needle", difficulty: "easy", category: "classic", aliases: ["a needle"] },
+      { riddle: "What has to be broken before you can use it?", answer: "egg", difficulty: "easy", category: "classic", aliases: ["an egg"] },
+      { riddle: "I’m tall when I’m young, and I’m short when I’m old.", answer: "candle", difficulty: "easy", category: "classic", aliases: ["a candle"] },
+      { riddle: "What can you catch, but not throw?", answer: "cold", difficulty: "easy", category: "classic", aliases: ["a cold"] },
+      { riddle: "What has keys but can't open locks?", answer: "piano", difficulty: "easy", category: "classic", aliases: ["a piano"] },
+      { riddle: "What gets wetter as it dries?", answer: "towel", difficulty: "easy", category: "classic", aliases: ["a towel"] },
+      { riddle: "What has a head, a tail, but no body?", answer: "coin", difficulty: "easy", category: "classic", aliases: ["a coin"] },
+      { riddle: "I have branches, but no fruit, trunk, or leaves.", answer: "bank", difficulty: "medium", category: "classic", aliases: ["a bank"] },
+      { riddle: "The more of me you take, the more you leave behind. What am I?", answer: "footsteps", difficulty: "medium", category: "logic", aliases: ["steps", "foot prints", "footprints"] },
+      { riddle: "I can fill a room without taking up space. What am I?", answer: "light", difficulty: "easy", category: "nature", aliases: ["the light"] },
+      { riddle: "What disappears as soon as you say its name?", answer: "silence", difficulty: "medium", category: "logic", aliases: ["quiet"] },
+      { riddle: "I am always in front of you but can never be seen. What am I?", answer: "future", difficulty: "medium", category: "logic", aliases: ["the future"] },
+      { riddle: "What has many teeth but cannot bite?", answer: "comb", difficulty: "easy", category: "classic", aliases: ["a comb"] },
+      { riddle: "I run all day and night, but I never get tired. I have no legs, yet I travel through every machine.", answer: "electricity", difficulty: "hard", category: "tech", aliases: ["current", "power"] },
+      { riddle: "I remember everything you type, but forget when the page is cleared. I live in your browser, not the cloud.", answer: "local storage", difficulty: "hard", category: "tech", aliases: ["localstorage", "browser storage"] },
+      { riddle: "I split a secret into symbols, yet I am not a lock. Reverse my steps and meaning comes back.", answer: "cipher", difficulty: "hard", category: "tech", aliases: ["a cipher", "encryption"] },
+      { riddle: "I grow without roots, shrink without being cut, and vanish when the warmth wins.", answer: "ice", difficulty: "medium", category: "nature", aliases: ["ice cube", "an ice cube"] },
+      { riddle: "I am a path with no feet, drawn by choices you already made. Follow me and you see where you have been.", answer: "history", difficulty: "expert", category: "logic", aliases: ["browser history", "trail"] },
+      { riddle: "I can be cracked, made, told, and played. I can make people laugh, but I am not alive.", answer: "joke", difficulty: "medium", category: "classic", aliases: ["a joke"] },
+      { riddle: "I turn tiny differences into tomorrow's winners, but I never choose with a mind of my own.", answer: "evolution", difficulty: "expert", category: "nature", aliases: ["natural selection"] },
+      { riddle: "I am a map of guesses. Each wrong path makes me wiser, but only if you learn from the signal.", answer: "model", difficulty: "expert", category: "tech", aliases: ["a model", "machine learning model"] }
     ];
 
-    const glitches = {
-      zalgoUp: '͑͑', zalgoDown: '͒͒', wide: '〰️', cuneiform: '𒉿', rtl: '\u202E', zw: '\u200B', priv: '\uE000'
+    const glitchTokens = {
+      zalgoUp: ["\u0311", "\u030d", "\u0307", "\u0352"],
+      zalgoDown: ["\u0316", "\u0320", "\u0324", "\u0339"],
+      wide: "〰️",
+      cuneiform: "𒉿",
+      rtl: "\u202E",
+      ltr: "\u202D",
+      zw: "\u200B",
+      priv: "\uE000",
+      glyphs: ["⌁", "◇", "⟁", "✦", "⌬", "⟡", "≋", "◌", "◈", "⟐"]
     };
 
+    const achievementsCatalog = {
+      "Riddle Rookie": "Solve your first riddle.",
+      "Streaker": "Reach a 5-riddle streak.",
+      "Mastermind": "Solve 20 riddles total.",
+      "Glitch Hunter": "Use every cipher mode at least once.",
+      "No-Hint Ninja": "Solve a hard or expert riddle with no hints.",
+      "Speed Echo": "Solve a riddle in under 10 seconds.",
+      "Custom Crafter": "Import a custom riddle pack."
+    };
+
+    const $ = (selector) => document.querySelector(selector);
+
+    const els = {
+      body: document.body,
+      themeToggle: $("#themeToggle"),
+      difficulty: $("#difficulty"),
+      category: $("#category"),
+      cipherMode: $("#cipherMode"),
+      intensity: $("#intensity"),
+      intensityValue: $("#intensityValue"),
+      riddleInput: $("#riddleInput"),
+      glitchOutput: $("#glitchOutput"),
+      answerInput: $("#answerInput"),
+      result: $("#result"),
+      scoreTop: $("#scoreTop"),
+      streakTop: $("#streakTop"),
+      accuracyTop: $("#accuracyTop"),
+      comboTop: $("#comboTop"),
+      confidenceBar: $("#confidenceBar"),
+      confidenceText: $("#confidenceText"),
+      playerName: $("#playerName"),
+      leaderboard: $("#leaderboard"),
+      achievements: $("#achievements"),
+      history: $("#history"),
+      fuzzyToggle: $("#fuzzyToggle"),
+      confidenceToggle: $("#confidenceToggle"),
+      smartHintToggle: $("#smartHintToggle"),
+      motionToggle: $("#motionToggle"),
+      contrastToggle: $("#contrastToggle"),
+      soundToggle: $("#soundToggle"),
+      importDialog: $("#importDialog"),
+      importText: $("#importText"),
+      helpDialog: $("#helpDialog")
+    };
+
+    const state = loadState();
     let current = null;
-    let streak = 0;
-    let score = 0;
-    let solvedRiddlesCount = 0;
-    let startTime;
+    let currentEncrypted = "";
+    let startTime = null;
+    let hintLevel = 0;
+    let currentWasDaily = false;
 
-    let achievements = JSON.parse(localStorage.getItem('achievements')) || {
-        "Riddle Rookie": false,
-        "Streaker": false,
-        "Mastermind": false
-    };
+    function defaultState() {
+      const migratedAchievements = JSON.parse(localStorage.getItem(OLD_ACHIEVEMENT_KEY) || "{}");
+      return {
+        theme: "light",
+        playerName: "Player",
+        score: 0,
+        streak: 0,
+        highStreak: Number(localStorage.getItem("highStreak") || 0),
+        solved: 0,
+        attempts: 0,
+        correct: 0,
+        combo: 1,
+        bestTime: null,
+        totalSolveTime: 0,
+        leaderboard: JSON.parse(localStorage.getItem("leaderboard") || "[]"),
+        achievements: Object.fromEntries(Object.keys(achievementsCatalog).map(name => [name, Boolean(migratedAchievements[name])])),
+        customRiddles: [],
+        history: [],
+        usedCiphers: [],
+        settings: {
+          fuzzy: true,
+          confidence: true,
+          smartHints: true,
+          reducedMotion: false,
+          highContrast: false,
+          sound: false
+        }
+      };
+    }
 
-    // --- DOM Elements ---
-    const themeToggleBtn = document.getElementById('themeToggle');
-    const genBtn = document.getElementById('genBtn');
-    const encryptBtn = document.getElementById('encryptBtn');
-    const solveBtn = document.getElementById('solveBtn');
-    const hintBtn = document.getElementById('hintBtn');
-    const body = document.body;
-    
-    // --- Event Listeners ---
-    themeToggleBtn.onclick = () => {
-      const isLight = body.getAttribute('data-theme') === 'light';
-      body.setAttribute('data-theme', isLight ? 'dark' : 'light');
-      themeToggleBtn.innerText = isLight ? 'Switch to Light Mode' : 'Switch to Dark Mode';
-    };
+    function loadState() {
+      try {
+        const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+        return mergeDeep(defaultState(), saved || {});
+      } catch {
+        return defaultState();
+      }
+    }
 
-    document.addEventListener('mousemove', (e) => {
-        body.style.setProperty('--x', `${e.clientX}px`);
-        body.style.setProperty('--y', `${e.clientY}px`);
-    });
+    function mergeDeep(base, incoming) {
+      const out = Array.isArray(base) ? [...base] : { ...base };
+      for (const [key, value] of Object.entries(incoming || {})) {
+        if (value && typeof value === "object" && !Array.isArray(value) && key in out) {
+          out[key] = mergeDeep(out[key], value);
+        } else {
+          out[key] = value;
+        }
+      }
+      return out;
+    }
 
-    genBtn.onclick = () => {
-      const diff = document.getElementById('difficulty').value;
-      const pool = riddles.filter(r => {
-        const len = r.riddle.length;
-        if (diff === 'easy') return len < 50;
-        if (diff === 'hard') return len > 80;
-        return len >= 50 && len <= 80;
+    function saveState() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }
+
+    function allRiddles() {
+      return [...baseRiddles, ...state.customRiddles.map(r => ({ difficulty: "medium", category: "custom", aliases: [], ...r }))];
+    }
+
+    function setResult(message, type = "") {
+      els.result.className = `result ${type}`.trim();
+      els.result.textContent = message;
+    }
+
+    function chooseDifficulty() {
+      const selected = els.difficulty.value;
+      if (selected !== "adaptive") return selected;
+      if (state.streak >= 8) return "expert";
+      if (state.streak >= 5) return "hard";
+      if (state.streak >= 2) return "medium";
+      return "easy";
+    }
+
+    function generateRiddle({ daily = false } = {}) {
+      const targetDifficulty = chooseDifficulty();
+      const category = els.category.value;
+      let pool = allRiddles().filter(r => {
+        const diffOk = targetDifficulty === "all" || r.difficulty === targetDifficulty;
+        const catOk = category === "all" || r.category === category;
+        return diffOk && catOk;
       });
-      
-      current = pool.length > 0 ? pool[Math.floor(Math.random() * pool.length)] : riddles[0];
-      
-      document.getElementById('riddleInput').value = current.riddle;
-      document.getElementById('glitchOutput').innerHTML = '';
-      document.getElementById('answerInput').value = '';
-      document.getElementById('result').innerText = 'Riddle generated. Encrypt it!';
-      startTime = new Date(); // Start the timer
-    };
 
-    encryptBtn.onclick = () => {
-      const txt = document.getElementById('riddleInput').value;
-      if (!txt) return alert('Please generate a riddle first!');
-      const intensity = +document.getElementById('intensity').value / 100;
-      let enc = '';
-      for (let ch of txt) {
-        if (Math.random() < intensity * 0.6) enc += ch + glitches.zalgoUp + glitches.zalgoDown;
-        else if (Math.random() < intensity) enc += glitches.rtl + ch + glitches.zw;
-        else enc += ch + glitches.wide + glitches.cuneiform;
+      if (pool.length === 0 && category !== "all") {
+        pool = allRiddles().filter(r => r.category === category);
       }
-      enc += glitches.priv;
-      document.getElementById('glitchOutput').innerHTML = `<span class="glitch">${enc}</span>`;
-      document.getElementById('result').innerText = 'Encrypted! Now, solve it.';
-    };
+      if (pool.length === 0) pool = allRiddles();
 
-    solveBtn.onclick = () => {
-      const guess = document.getElementById('answerInput').value.toLowerCase().trim();
-      if (!current) return alert('Generate a riddle first!');
-
-      if (guess === current.answer) {
-        streak++;
-        solvedRiddlesCount++;
-        calculateScore();
-        document.getElementById('glitchOutput').innerHTML = `<span class="echo">${current.riddle} (Answer: ${current.answer})</span>`;
-        document.getElementById('result').innerText = 'Correct! 🎉';
-        checkAchievements();
+      let picked;
+      if (daily) {
+        const d = new Date();
+        const seed = Number(`${d.getFullYear()}${String(d.getMonth()+1).padStart(2,"0")}${String(d.getDate()).padStart(2,"0")}`);
+        picked = pool[seed % pool.length];
+        currentWasDaily = true;
       } else {
-        streak = 0;
-        document.getElementById('result').innerText = 'Wrong! The streak is reset.';
+        picked = pool[Math.floor(Math.random() * pool.length)];
+        currentWasDaily = false;
       }
-      updateStats();
-    };
-    
-    hintBtn.onclick = () => {
-      if (!current) return;
-      const reveal = current.answer.slice(0, Math.ceil(current.answer.length / 2));
-      document.getElementById('result').innerText = `Hint: The answer starts with "${reveal}"`;
-    };
 
-    // --- Game Logic Functions ---
-    function calculateScore() {
-        const endTime = new Date();
-        const timeDiff = (endTime - startTime) / 1000; // in seconds
-        let points = 100;
-        if (timeDiff < 10) points += 50; // Speed bonus
-        
-        const difficulty = document.getElementById('difficulty').value;
-        if (difficulty === 'medium') points *= 1.5;
-        else if (difficulty === 'hard') points *= 2;
-        
-        score += Math.round(points);
-    }
-    
-    function updateStats() {
-      const highStreak = localStorage.getItem('highStreak') || 0;
-      if (streak > highStreak) {
-          localStorage.setItem('highStreak', streak);
-      }
-      document.getElementById('streak').innerText = `Streak: ${streak} (High: ${localStorage.getItem('highStreak') || 0})`;
-      document.getElementById('score').innerText = `Score: ${score}`;
-      updateLeaderboard(score);
+      current = normalizeRiddleRecord(picked);
+      hintLevel = 0;
+      startTime = new Date();
+      currentEncrypted = "";
+      els.riddleInput.value = current.riddle;
+      els.answerInput.value = "";
+      clearOutput();
+      updateConfidence();
+      setResult(`${daily ? "Daily signal" : "Riddle"} generated. Encrypt it, then decode the answer.`);
+      blip(520, .045);
     }
 
-    // --- Achievements System ---
-    function checkAchievements() {
-      if (solvedRiddlesCount >= 1 && !achievements["Riddle Rookie"]) {
-        achievements["Riddle Rookie"] = true;
-        showAchievement("Riddle Rookie");
+    function normalizeRiddleRecord(r) {
+      return {
+        riddle: String(r.riddle || "").trim(),
+        answer: String(r.answer || "").trim(),
+        difficulty: r.difficulty || "medium",
+        category: r.category || "custom",
+        aliases: Array.isArray(r.aliases) ? r.aliases.map(String) : []
+      };
+    }
+
+    function clearOutput() {
+      els.glitchOutput.textContent = "";
+      els.glitchOutput.className = "output-box";
+    }
+
+    function seededRandom(seed) {
+      let s = seed % 2147483647;
+      if (s <= 0) s += 2147483646;
+      return () => (s = s * 16807 % 2147483647) / 2147483647;
+    }
+
+    function encryptGlitch() {
+      const txt = els.riddleInput.value.trim();
+      if (!txt) {
+        setResult("Please generate or type a riddle first.", "bad");
+        return;
       }
-      if (streak >= 5 && !achievements["Streaker"]) {
-        achievements["Streaker"] = true;
-        showAchievement("Streaker");
+      if (!current || current.riddle !== txt) {
+        current = normalizeRiddleRecord({ riddle: txt, answer: current?.answer || "", difficulty: chooseDifficulty(), category: "custom" });
       }
-      if (solvedRiddlesCount >= 20 && !achievements["Mastermind"]) { // Lowered for demo
-        achievements["Mastermind"] = true;
-        showAchievement("Mastermind");
+      const intensity = Number(els.intensity.value) / 100;
+      const mode = els.cipherMode.value;
+      const rand = currentWasDaily ? seededRandom(Date.now() + txt.length) : Math.random;
+      currentEncrypted = transformText(txt, mode, intensity, rand);
+      renderOutput(currentEncrypted, "glitch");
+      setResult(`Encrypted with ${els.cipherMode.options[els.cipherMode.selectedIndex].text}. Solve the riddle when ready.`);
+      if (!state.usedCiphers.includes(mode)) state.usedCiphers.push(mode);
+      unlockIf(state.usedCiphers.length >= 6, "Glitch Hunter");
+      saveState();
+      blip(320, .05);
+    }
+
+    function transformText(text, mode, intensity, rand) {
+      switch (mode) {
+        case "mirror": return mirrorFog(text, intensity, rand);
+        case "caesar": return caesarStatic(text, intensity, rand);
+        case "glyph": return glyphStorm(text, intensity, rand);
+        case "stealth": return zeroWidthWhisper(text, intensity, rand);
+        case "hybrid": return hybridChaos(text, intensity, rand);
+        default: return echoZalgo(text, intensity, rand);
       }
-      localStorage.setItem('achievements', JSON.stringify(achievements));
+    }
+
+    function echoZalgo(text, intensity, rand) {
+      let out = "";
+      for (const ch of text) {
+        out += ch;
+        if (rand() < intensity * .65) out += pick(glitchTokens.zalgoUp, rand) + pick(glitchTokens.zalgoDown, rand);
+        if (rand() < intensity * .30) out += glitchTokens.wide;
+        if (rand() < intensity * .18) out += glitchTokens.cuneiform;
+      }
+      return out + glitchTokens.priv;
+    }
+
+    function mirrorFog(text, intensity, rand) {
+      const words = text.split(/(\s+)/);
+      return words.map(part => {
+        if (/\s+/.test(part)) return part;
+        if (rand() < intensity) return glitchTokens.rtl + [...part].reverse().join("") + glitchTokens.ltr;
+        return part + (rand() < intensity * .45 ? "⇄" : "");
+      }).join("") + glitchTokens.priv;
+    }
+
+    function caesarStatic(text, intensity, rand) {
+      const shift = 1 + Math.floor(intensity * 12);
+      return [...text].map(ch => {
+        if (!/[a-z]/i.test(ch) || rand() > .35 + intensity * .55) return ch;
+        const code = ch.charCodeAt(0);
+        const base = code >= 97 ? 97 : 65;
+        return String.fromCharCode(((code - base + shift) % 26) + base);
+      }).join("") + ` ⟦shift:${shift}⟧`;
+    }
+
+    function glyphStorm(text, intensity, rand) {
+      let out = "";
+      for (const ch of text) {
+        if (rand() < intensity * .55) out += pick(glitchTokens.glyphs, rand);
+        out += ch;
+        if (rand() < intensity * .38) out += pick(glitchTokens.glyphs, rand);
+      }
+      return out;
+    }
+
+    function zeroWidthWhisper(text, intensity, rand) {
+      let out = "";
+      for (const ch of text) {
+        out += ch;
+        const count = Math.floor(rand() * intensity * 5);
+        out += glitchTokens.zw.repeat(count);
+      }
+      return out + glitchTokens.priv;
+    }
+
+    function hybridChaos(text, intensity, rand) {
+      const modes = [echoZalgo, mirrorFog, caesarStatic, glyphStorm, zeroWidthWhisper];
+      const chunks = text.match(/.{1,10}/g) || [text];
+      return chunks.map(chunk => pick(modes, rand)(chunk, intensity, rand)).join(" ");
+    }
+
+    function pick(arr, rand = Math.random) {
+      return arr[Math.floor(rand() * arr.length)];
+    }
+
+    function renderOutput(text, className) {
+      els.glitchOutput.textContent = "";
+      els.glitchOutput.className = "output-box";
+      const span = document.createElement("span");
+      span.className = className;
+      span.textContent = text;
+      els.glitchOutput.appendChild(span);
+    }
+
+    function solve() {
+      if (!current) {
+        setResult("Generate a riddle first.", "bad");
+        return;
+      }
+      if (!current.answer) {
+        setResult("This custom riddle needs an answer. Import it with an answer or use a built-in riddle.", "bad");
+        return;
+      }
+
+      const guessRaw = els.answerInput.value;
+      const guess = cleanAnswer(guessRaw);
+      const answers = [current.answer, ...current.aliases].map(cleanAnswer).filter(Boolean);
+      const best = bestSimilarity(guess, answers);
+      const exact = answers.includes(guess);
+      const fuzzy = els.fuzzyToggle.checked && current.answer.length > 3 && best >= .84;
+
+      state.attempts++;
+      if (exact || fuzzy) {
+        const solveSeconds = Math.max(1, (new Date() - startTime) / 1000 || 1);
+        const gained = calculateScore(solveSeconds, Boolean(fuzzy));
+        state.score += gained;
+        state.streak++;
+        state.highStreak = Math.max(state.highStreak, state.streak);
+        state.correct++;
+        state.solved++;
+        state.combo = Math.min(8, 1 + Math.floor(state.streak / 3));
+        state.bestTime = state.bestTime === null ? solveSeconds : Math.min(state.bestTime, solveSeconds);
+        state.totalSolveTime += solveSeconds;
+
+        renderOutput(`${current.riddle}\n\nAnswer: ${current.answer}`, "echo");
+        setResult(`Correct! +${gained} pts${fuzzy && !exact ? " — accepted as a close match" : ""}.`, "ok");
+        addHistory(true, gained, solveSeconds);
+        updateLeaderboard();
+        unlockIf(state.solved >= 1, "Riddle Rookie");
+        unlockIf(state.streak >= 5, "Streaker");
+        unlockIf(state.solved >= 20, "Mastermind");
+        unlockIf(solveSeconds < 10, "Speed Echo");
+        unlockIf(["hard", "expert"].includes(current.difficulty) && hintLevel === 0, "No-Hint Ninja");
+        blip(720, .08);
+      } else {
+        state.streak = 0;
+        state.combo = 1;
+        setResult(`Wrong signal. Closest confidence: ${Math.round(best * 100)}%. Streak reset.`, "bad");
+        addHistory(false, 0, null);
+        blip(180, .08);
+      }
+      updateUI();
+      saveState();
+    }
+
+    function calculateScore(seconds, fuzzyAccepted) {
+      const diffMultiplier = { easy: 1, medium: 1.5, hard: 2.1, expert: 3.0 }[current.difficulty] || 1.25;
+      const intensityBonus = 1 + Number(els.intensity.value) / 180;
+      const speedBonus = seconds < 10 ? 50 : seconds < 25 ? 25 : 0;
+      const hintPenalty = hintLevel * 18;
+      const fuzzyPenalty = fuzzyAccepted ? 20 : 0;
+      const dailyBonus = currentWasDaily ? 40 : 0;
+      const base = 100 * diffMultiplier * intensityBonus * state.combo;
+      return Math.max(10, Math.round(base + speedBonus + dailyBonus - hintPenalty - fuzzyPenalty));
+    }
+
+    function cleanAnswer(value) {
+      return String(value || "")
+        .toLowerCase()
+        .normalize("NFKD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/\b(a|an|the)\b/g, "")
+        .replace(/[^a-z0-9]+/g, " ")
+        .trim()
+        .replace(/\s+/g, " ");
+    }
+
+    function bestSimilarity(guess, answers) {
+      if (!guess || answers.length === 0) return 0;
+      return Math.max(...answers.map(answer => similarity(guess, answer)));
+    }
+
+    function similarity(a, b) {
+      if (a === b) return 1;
+      if (!a || !b) return 0;
+      if (a.includes(b) || b.includes(a)) return Math.min(a.length, b.length) / Math.max(a.length, b.length);
+      const dist = levenshtein(a, b);
+      return 1 - dist / Math.max(a.length, b.length);
+    }
+
+    function levenshtein(a, b) {
+      const dp = Array.from({ length: a.length + 1 }, () => Array(b.length + 1).fill(0));
+      for (let i = 0; i <= a.length; i++) dp[i][0] = i;
+      for (let j = 0; j <= b.length; j++) dp[0][j] = j;
+      for (let i = 1; i <= a.length; i++) {
+        for (let j = 1; j <= b.length; j++) {
+          const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+          dp[i][j] = Math.min(dp[i - 1][j] + 1, dp[i][j - 1] + 1, dp[i - 1][j - 1] + cost);
+        }
+      }
+      return dp[a.length][b.length];
+    }
+
+    function updateConfidence() {
+      if (!els.confidenceToggle.checked || !current?.answer) {
+        els.confidenceBar.style.width = "0%";
+        els.confidenceText.textContent = "Confidence meter disabled or waiting for a generated riddle.";
+        return;
+      }
+      const guess = cleanAnswer(els.answerInput.value);
+      const answers = [current.answer, ...current.aliases].map(cleanAnswer);
+      const conf = Math.round(bestSimilarity(guess, answers) * 100);
+      els.confidenceBar.style.width = `${conf}%`;
+      els.confidenceText.textContent = guess ? `Answer confidence: ${conf}%` : "Start typing to estimate answer confidence.";
+    }
+
+    function hint() {
+      if (!current) {
+        setResult("Generate a riddle first.", "bad");
+        return;
+      }
+      if (!current.answer) {
+        setResult("No answer is available for this custom riddle.", "bad");
+        return;
+      }
+      hintLevel++;
+      const answer = current.answer;
+      let msg;
+      if (!els.smartHintToggle.checked) {
+        msg = `Hint: The answer starts with "${answer.slice(0, Math.ceil(answer.length / 2))}".`;
+      } else if (hintLevel === 1) {
+        msg = `Smart Hint 1: Category is ${current.category}; answer length is ${answer.length} characters.`;
+      } else if (hintLevel === 2) {
+        msg = `Smart Hint 2: First letter is "${answer[0]}" and last letter is "${answer[answer.length - 1]}".`;
+      } else if (hintLevel === 3) {
+        msg = `Smart Hint 3: Revealed pattern: ${answer.split("").map((ch, i) => i % 2 === 0 || ch === " " ? ch : "_").join("")}`;
+      } else {
+        msg = `Final Hint: The answer starts with "${answer.slice(0, Math.ceil(answer.length / 2))}".`;
+      }
+      setResult(msg);
+      blip(460, .04);
+    }
+
+    function decodeLens() {
+      const source = currentEncrypted || els.glitchOutput.textContent || els.riddleInput.value;
+      if (!source) {
+        setResult("Nothing to decode yet.", "bad");
+        return;
+      }
+      const cleaned = source
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[\u200B-\u200D\u202A-\u202E\uE000]/g, "")
+        .replace(/[〰️𒉿⌁◇⟁✦⌬⟡≋◌◈⟐⇄]/gu, "")
+        .replace(/⟦shift:\d+⟧/g, "")
+        .replace(/\s+/g, " ")
+        .trim();
+      renderOutput(cleaned || "The signal is mostly invisible. Try lowering intensity.", "decoded");
+      setResult("Decode Lens active: visual glitch markers were stripped from the output.");
+    }
+
+    function skip() {
+      if (!current) return setResult("Generate a riddle first.", "bad");
+      state.streak = 0;
+      state.combo = 1;
+      setResult(`Skipped. Answer was: ${current.answer || "unknown"}. Streak reset.`, "bad");
+      renderOutput(`${current.riddle}\n\nAnswer: ${current.answer || "unknown"}`, "decoded");
+      addHistory(false, 0, null, true);
+      updateUI();
+      saveState();
+    }
+
+    async function copyOutput() {
+      const text = els.glitchOutput.textContent;
+      if (!text) return setResult("No output to copy yet.", "bad");
+      try {
+        await navigator.clipboard.writeText(text);
+        setResult("Glitch output copied to clipboard.", "ok");
+      } catch {
+        setResult("Clipboard permission blocked. Select the output manually to copy.", "bad");
+      }
+    }
+
+    function addHistory(correct, points, seconds, skipped = false) {
+      state.history.unshift({
+        riddle: current?.riddle || els.riddleInput.value,
+        answer: current?.answer || "unknown",
+        difficulty: current?.difficulty || chooseDifficulty(),
+        category: current?.category || els.category.value,
+        correct,
+        skipped,
+        points,
+        seconds,
+        at: new Date().toISOString()
+      });
+      state.history = state.history.slice(0, 10);
+    }
+
+    function updateLeaderboard() {
+      const name = (els.playerName.value || "Player").trim().slice(0, 24);
+      state.playerName = name;
+      let entry = state.leaderboard.find(row => row.name === name);
+      if (entry) {
+        entry.score = Math.max(entry.score, state.score);
+        entry.highStreak = Math.max(entry.highStreak || 0, state.highStreak);
+      } else {
+        state.leaderboard.push({ name, score: state.score, highStreak: state.highStreak });
+      }
+      state.leaderboard.sort((a, b) => b.score - a.score || (b.highStreak || 0) - (a.highStreak || 0));
+      state.leaderboard = state.leaderboard.slice(0, 8);
+    }
+
+    function unlockIf(condition, name) {
+      if (!condition || state.achievements[name]) return;
+      state.achievements[name] = true;
+      showAchievement(name);
     }
 
     function showAchievement(name) {
-      const popup = document.createElement('div');
-      popup.className = 'achievement-popup';
-      popup.innerText = `Achievement Unlocked: ${name}!`;
+      const popup = document.createElement("div");
+      popup.className = "achievement-popup";
+      popup.textContent = `Achievement Unlocked: ${name}!`;
       document.body.appendChild(popup);
-      
-      // Animate in
+      setTimeout(() => { popup.style.bottom = "22px"; }, 20);
       setTimeout(() => {
-        popup.style.bottom = '20px';
-      }, 10);
-
-      // Animate out and remove
-      setTimeout(() => {
-        popup.style.bottom = '-100px';
+        popup.style.bottom = "-130px";
         setTimeout(() => popup.remove(), 500);
-      }, 4000);
+      }, 3600);
+      blip(880, .10);
+      updateAchievements();
     }
 
-    // --- Leaderboard System ---
-    function updateLeaderboard(newScore) {
-      let leaderboard = JSON.parse(localStorage.getItem('leaderboard')) || [];
-      const playerName = "Player"; // Could be customized in a future version
-      
-      // Find if player is already on the board
-      let playerEntry = leaderboard.find(entry => entry.name === playerName);
-      if (playerEntry) {
-          playerEntry.score = Math.max(playerEntry.score, newScore);
+    function updateAchievements() {
+      els.achievements.textContent = "";
+      for (const [name, description] of Object.entries(achievementsCatalog)) {
+        const badge = document.createElement("span");
+        badge.className = `badge ${state.achievements[name] ? "" : "locked"}`;
+        badge.title = description;
+        badge.textContent = `${state.achievements[name] ? "✓" : "🔒"} ${name}`;
+        els.achievements.appendChild(badge);
+      }
+    }
+
+    function updateUI() {
+      els.scoreTop.textContent = state.score;
+      els.streakTop.textContent = `${state.streak} / ${state.highStreak}`;
+      const accuracy = state.attempts ? Math.round((state.correct / state.attempts) * 100) : 0;
+      els.accuracyTop.textContent = `${accuracy}%`;
+      els.comboTop.textContent = `x${state.combo}`;
+      els.playerName.value = state.playerName || "Player";
+
+      els.leaderboard.textContent = "";
+      if (!state.leaderboard.length) {
+        els.leaderboard.innerHTML = `<div class="mini-item">Solve a riddle to join the board.</div>`;
       } else {
-          leaderboard.push({ name: playerName, score: newScore });
+        state.leaderboard.forEach((entry, index) => {
+          const div = document.createElement("div");
+          div.className = "mini-item";
+          div.textContent = `${index + 1}. ${entry.name} — ${entry.score} pts · best streak ${entry.highStreak || 0}`;
+          els.leaderboard.appendChild(div);
+        });
       }
 
-      leaderboard.sort((a, b) => b.score - a.score);
-      leaderboard = leaderboard.slice(0, 5); // Keep top 5
-      localStorage.setItem('leaderboard', JSON.stringify(leaderboard));
-      displayLeaderboard();
+      els.history.textContent = "";
+      if (!state.history.length) {
+        els.history.innerHTML = `<div class="mini-item">No solves yet.</div>`;
+      } else {
+        state.history.forEach(item => {
+          const div = document.createElement("div");
+          div.className = "mini-item";
+          const status = item.skipped ? "Skipped" : item.correct ? "Solved" : "Missed";
+          const timing = item.seconds ? ` · ${item.seconds.toFixed(1)}s` : "";
+          div.textContent = `${status}: ${item.answer} · ${item.points} pts${timing}`;
+          els.history.appendChild(div);
+        });
+      }
+
+      updateAchievements();
+      updateConfidence();
     }
 
-    function displayLeaderboard() {
-      const leaderboard = JSON.parse(localStorage.getItem('leaderboard')) || [];
-      const lbContainer = document.getElementById('leaderboard');
-      lbContainer.innerHTML = '<h3>🏆 Leaderboard 🏆</h3>';
-      if(leaderboard.length === 0){
-          lbContainer.innerHTML += '<p>Solve a riddle to get on the board!</p>';
-          return;
+    function applySettingsToDom() {
+      els.body.setAttribute("data-theme", state.theme);
+      els.themeToggle.textContent = state.theme === "light" ? "Switch to Dark Mode" : "Switch to Light Mode";
+      els.fuzzyToggle.checked = state.settings.fuzzy;
+      els.confidenceToggle.checked = state.settings.confidence;
+      els.smartHintToggle.checked = state.settings.smartHints;
+      els.motionToggle.checked = state.settings.reducedMotion;
+      els.contrastToggle.checked = state.settings.highContrast;
+      els.soundToggle.checked = state.settings.sound;
+      els.body.setAttribute("data-motion", state.settings.reducedMotion ? "reduced" : "full");
+      els.body.setAttribute("data-contrast", state.settings.highContrast ? "high" : "normal");
+    }
+
+    function saveSettingsFromDom() {
+      state.settings.fuzzy = els.fuzzyToggle.checked;
+      state.settings.confidence = els.confidenceToggle.checked;
+      state.settings.smartHints = els.smartHintToggle.checked;
+      state.settings.reducedMotion = els.motionToggle.checked;
+      state.settings.highContrast = els.contrastToggle.checked;
+      state.settings.sound = els.soundToggle.checked;
+      els.body.setAttribute("data-motion", state.settings.reducedMotion ? "reduced" : "full");
+      els.body.setAttribute("data-contrast", state.settings.highContrast ? "high" : "normal");
+      updateConfidence();
+      saveState();
+    }
+
+    function openImport() {
+      els.importText.value = JSON.stringify(state.customRiddles, null, 2);
+      els.importDialog.showModal();
+    }
+
+    function saveImport() {
+      try {
+        const parsed = JSON.parse(els.importText.value || "[]");
+        if (!Array.isArray(parsed)) throw new Error("Top-level JSON must be an array.");
+        const valid = parsed.map(normalizeRiddleRecord).filter(r => r.riddle && r.answer);
+        state.customRiddles = valid;
+        unlockIf(valid.length > 0, "Custom Crafter");
+        saveState();
+        els.importDialog.close();
+        setResult(`Imported ${valid.length} custom riddles.`, "ok");
+      } catch (err) {
+        setResult(`Import failed: ${err.message}`, "bad");
       }
-      leaderboard.forEach((entry, index) => {
-        lbContainer.innerHTML += `<p>${index + 1}. ${entry.name} - ${entry.score} pts</p>`;
+    }
+
+    function exportProgress() {
+      const payload = JSON.stringify(state, null, 2);
+      const blob = new Blob([payload], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `echoglitch-progress-${new Date().toISOString().slice(0,10)}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      setResult("Progress exported as JSON.", "ok");
+    }
+
+    function resetLocalData() {
+      const ok = confirm("Reset all local EchoGlitch progress, leaderboard, achievements, and custom riddles?");
+      if (!ok) return;
+      localStorage.removeItem(STORAGE_KEY);
+      localStorage.removeItem("leaderboard");
+      localStorage.removeItem("highStreak");
+      localStorage.removeItem(OLD_ACHIEVEMENT_KEY);
+      location.reload();
+    }
+
+    let audioCtx;
+    function blip(freq = 440, duration = .05) {
+      if (!els.soundToggle.checked) return;
+      try {
+        audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.frequency.value = freq;
+        osc.type = "sine";
+        gain.gain.value = .035;
+        osc.connect(gain).connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+      } catch { /* Audio may be unavailable; ignore gracefully. */ }
+    }
+
+    function bindEvents() {
+      els.themeToggle.addEventListener("click", () => {
+        state.theme = state.theme === "light" ? "dark" : "light";
+        applySettingsToDom();
+        saveState();
+      });
+
+      document.addEventListener("mousemove", (e) => {
+        els.body.style.setProperty("--x", `${e.clientX}px`);
+        els.body.style.setProperty("--y", `${e.clientY}px`);
+      });
+
+      $("#genBtn").addEventListener("click", () => generateRiddle());
+      $("#dailyBtn").addEventListener("click", () => generateRiddle({ daily: true }));
+      $("#encryptBtn").addEventListener("click", encryptGlitch);
+      $("#solveBtn").addEventListener("click", solve);
+      $("#hintBtn").addEventListener("click", hint);
+      $("#lensBtn").addEventListener("click", decodeLens);
+      $("#skipBtn").addEventListener("click", skip);
+      $("#copyBtn").addEventListener("click", copyOutput);
+      $("#importBtn").addEventListener("click", openImport);
+      $("#saveImportBtn").addEventListener("click", saveImport);
+      $("#closeImportBtn").addEventListener("click", () => els.importDialog.close());
+      $("#exportBtn").addEventListener("click", exportProgress);
+      $("#resetBtn").addEventListener("click", resetLocalData);
+      $("#helpBtn").addEventListener("click", () => els.helpDialog.showModal());
+      $("#closeHelpBtn").addEventListener("click", () => els.helpDialog.close());
+
+      els.intensity.addEventListener("input", () => {
+        els.intensityValue.textContent = `${els.intensity.value}%`;
+      });
+
+      els.answerInput.addEventListener("input", updateConfidence);
+      els.playerName.addEventListener("change", () => {
+        state.playerName = (els.playerName.value || "Player").trim().slice(0, 24);
+        updateLeaderboard();
+        updateUI();
+        saveState();
+      });
+
+      [els.fuzzyToggle, els.confidenceToggle, els.smartHintToggle, els.motionToggle, els.contrastToggle, els.soundToggle]
+        .forEach(input => input.addEventListener("change", saveSettingsFromDom));
+
+      document.addEventListener("keydown", (e) => {
+        if (["INPUT", "TEXTAREA", "SELECT"].includes(document.activeElement.tagName) && e.key !== "Enter") return;
+        if (e.key === "Enter" && document.activeElement === els.answerInput) { e.preventDefault(); solve(); }
+        if (e.key.toLowerCase() === "g") generateRiddle();
+        if (e.key.toLowerCase() === "e") encryptGlitch();
+        if (e.key.toLowerCase() === "h") hint();
+        if (e.key.toLowerCase() === "l") decodeLens();
       });
     }
-    
-    // --- Initial Load ---
+
     function initialize() {
-        const storedStreak = localStorage.getItem('highStreak') || 0;
-        document.getElementById('streak').innerText = `Streak: 0 (High: ${storedStreak})`;
-        score = 0; // Or load from storage if you want persistent score
-        solvedRiddlesCount = 0; // Or load from storage
-        displayLeaderboard();
+      applySettingsToDom();
+      els.intensityValue.textContent = `${els.intensity.value}%`;
+      updateLeaderboard();
+      updateUI();
+      bindEvents();
+      setResult("Ready. Generate a riddle or import your own custom signal pack.");
     }
 
     initialize();
-
   </script>
 </body>
 </html>
